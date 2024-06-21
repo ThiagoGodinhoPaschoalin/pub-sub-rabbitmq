@@ -1,0 +1,45 @@
+version: '3.4'
+
+networks:
+  shareddatawithpubsub_net:
+    external: true
+    name: shareddatawithpubsub_net
+    driver: bridge
+
+services:
+  provider_web:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=80
+      - URI_NOTIFICATION_CONSUMER=http://notification_consumer/notifications
+    ports:
+      - 8071:80
+    networks:
+      - shareddatawithpubsub_net
+  partner_web:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=80
+    ports:
+      - 8081:80
+    networks:
+      - shareddatawithpubsub_net
+  notification_consumer:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=80
+    ports:
+      - 8072:80
+    networks:
+      - shareddatawithpubsub_net
+  rabbitmq:
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    ports:
+    - 15672:15672
+    - 5672:5672
+    networks:
+      - shareddatawithpubsub_net

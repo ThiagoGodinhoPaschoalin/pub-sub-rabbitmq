@@ -1,0 +1,31 @@
+version: '3.4'
+
+services:
+  provider_web:
+    container_name: provider_web
+    image: ${DOCKER_REGISTRY-}provider_web
+    build:
+      context: .
+      dockerfile: ProviderApp/Dockerfile
+    depends_on:
+      - notification_consumer
+  partner_web:
+    container_name: partner_web
+    image: ${DOCKER_REGISTRY-}partner_web
+    build:
+      context: .
+      dockerfile: PartnerApp/Dockerfile
+    depends_on:
+      - notification_consumer
+  notification_consumer:
+    container_name: notification_consumer
+    image: ${DOCKER_REGISTRY-}notification_consumer
+    build:
+      context: .
+      dockerfile: NotificationConsumer/Dockerfile
+    depends_on:
+      - rabbitmq
+  rabbitmq:
+    container_name: broker_rabbitmq
+    image: "rabbitmq:3-management"
+    hostname: rabbitmq
